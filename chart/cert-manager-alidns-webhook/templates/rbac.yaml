@@ -1,9 +1,15 @@
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "cert-manager-alidns-webhook.fullname" . }}
+  name: {{ include "cert-manager-alidns-webhook.serviceAccountName" . }}
   labels:
     {{- include "cert-manager-alidns-webhook.labels" . | nindent 4 }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
 ---
 # Grant permissions to read secrets inside the cluster to allow to have issuer in another namespace than the webhook
 apiVersion: rbac.authorization.k8s.io/v1
@@ -34,7 +40,7 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-alidns-webhook.fullname" . }}
+    name: {{ include "cert-manager-alidns-webhook.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 # Grant the webhook permission to read the ConfigMap containing the Kubernetes
@@ -54,7 +60,7 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-alidns-webhook.fullname" . }}
+    name: {{ include "cert-manager-alidns-webhook.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 # apiserver gets the auth-delegator role to delegate auth decisions to
@@ -72,7 +78,7 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-alidns-webhook.fullname" . }}
+    name: {{ include "cert-manager-alidns-webhook.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 ---
 # Grant cert-manager permission to validate using our apiserver
@@ -103,5 +109,5 @@ roleRef:
 subjects:
   - apiGroup: ""
     kind: ServiceAccount
-    name: {{ include "cert-manager-alidns-webhook.serviceAccountName" . }}
-    namespace: {{ .Release.Namespace }}
+    name: {{ .Values.certManager.serviceAccountName }}
+    namespace: {{ .Values.certManager.namespace }}
