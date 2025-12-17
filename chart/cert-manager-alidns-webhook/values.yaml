@@ -1,0 +1,74 @@
+replicaCount: 1
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  #runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 443
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    scheme: HTTPS
+    path: /healthz
+    port: https
+readinessProbe:
+  httpGet:
+    scheme: HTTPS
+    path: /healthz
+    port: https
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+volumes:
+  - name: certs
+    secret:
+      secretName: '{{ include "cert-manager-alidns-webhook.servingCertificate" . }}'
+
+volumeMounts:
+  - name: certs
+    mountPath: /tls
+    readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
