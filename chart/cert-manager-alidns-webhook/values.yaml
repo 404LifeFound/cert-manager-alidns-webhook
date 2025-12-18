@@ -1,13 +1,13 @@
 groupName: acme.mycompany.com
 extraEnvs:
   GROUP_NAME: acme.mycompany.com
-  ALIDNS_REGION: cn-hangzhou
+  ALIDNS_REGION: ap-northeast-1
 
 replicaCount: 1
 image:
   repository: pingshangyao/cert-manager-alidns-webhook
   pullPolicy: IfNotPresent
-  tag: "v0.0.1"
+  tag: "v0.0.3"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -35,6 +35,8 @@ securityContext:
 service:
   type: ClusterIP
   port: 443
+
+podPort: 8443
 
 resources:
   limits:

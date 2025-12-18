@@ -7,6 +7,7 @@ import (
 	"github.com/404LifeFound/cert-manager-alidns-webhook/internal/utils"
 	alidns "github.com/alibabacloud-go/alidns-20150109/v5/client"
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
+	tea_utils "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/aliyun/credentials-go/credentials"
 	"github.com/rs/zerolog/log"
 )
@@ -49,7 +50,7 @@ func (a *AliDNS) GetTxTRecord(domain, rr string) (*alidns.DescribeDomainRecordsR
 		Type:       StringPtr("TXT"),
 	}
 
-	response, err := a.Client.DescribeDomainRecordsWithOptions(request, nil)
+	response, err := a.Client.DescribeDomainRecordsWithOptions(request, &tea_utils.RuntimeOptions{})
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to describe record: %s.%s", rr, domain)
 		return nil, err
@@ -74,7 +75,7 @@ func (a *AliDNS) AddTxTRecord(domain, rr, value string) error {
 		TTL:        Int64Ptr(600),
 	}
 
-	_, err := a.Client.AddDomainRecordWithOptions(request, nil)
+	_, err := a.Client.AddDomainRecordWithOptions(request, &tea_utils.RuntimeOptions{})
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to create TXT record: %s.%s", rr, domain)
 		return err
@@ -85,7 +86,7 @@ func (a *AliDNS) AddTxTRecord(domain, rr, value string) error {
 func (a *AliDNS) DeleteTxTRecord(id string) error {
 	request := &alidns.DeleteDomainRecordRequest{RecordId: StringPtr(id)}
 
-	_, err := a.Client.DeleteDomainRecordWithOptions(request, nil)
+	_, err := a.Client.DeleteDomainRecordWithOptions(request, &tea_utils.RuntimeOptions{})
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to delete txt record which id is: %s", id)
 		return err
@@ -100,7 +101,7 @@ func (a *AliDNS) GetHostedDomain(domain string) (string, error) {
 		SearchMode: StringPtr("EXACT"),
 	}
 
-	response, err := a.Client.DescribeDomainsWithOptions(request, nil)
+	response, err := a.Client.DescribeDomainsWithOptions(request, &tea_utils.RuntimeOptions{})
 	if err != nil {
 		log.Error().Err(err).Msgf("failed to describe domain: %s", domain)
 		return "", err

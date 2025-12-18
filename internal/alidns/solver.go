@@ -69,11 +69,13 @@ func (a *AliDNSProviderSolver) CleanUp(ch *v1alpha1.ChallengeRequest) error {
 }
 
 func (a *AliDNSProviderSolver) Initialize(kubeClientConfig *rest.Config, stopCh <-chan struct{}) error {
+	log.Info().Msg("init alicloud dns client...")
 	alidns_client, err := NewAliDNSClient(&config.GlobalConfig)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to setup alicloud dns client")
 		return err
 	}
 	a.AliDNS = alidns_client
+	log.Info().Msg("init alicloud dns client success")
 	return nil
 }

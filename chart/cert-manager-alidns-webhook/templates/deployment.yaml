@@ -44,7 +44,7 @@ spec:
           args:
             - --tls-cert-file=/tls/tls.crt
             - --tls-private-key-file=/tls/tls.key
-            - --secure-port={{ .Values.service.port }}
+            - --secure-port={{ .Values.podPort }}
           env:
             {{- range $k, $v := .Values.extraEnvs }}
             - name: {{ $k | quote }}
@@ -52,7 +52,7 @@ spec:
             {{- end }}
           ports:
             - name: https
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.podPort }}
               protocol: TCP
           {{- with .Values.livenessProbe }}
           livenessProbe:

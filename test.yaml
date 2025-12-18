@@ -1,0 +1,43 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging-tomas
+  namespace: cert-manager
+spec:
+  acme:
+    email: tomas.yao@woo.network
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-account-key-stag-tomas
+    solvers:
+    - dns01:
+        webhook:
+          groupName: acme.mycompany.com
+          solverName: alidns
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging-tomas
+    external-dns/provider: publicdns
+  name: test-alidns-webhook
+  namespace: woo-identity
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: alidns-webhook1.dev.m00ack.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: woo-identity-oathkeeper-proxy
+            port:
+              number: 4455
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - alidns-webhook1.dev.m00ack.org
+    secretName: alidns-webhook1.dev.m00ack.org
