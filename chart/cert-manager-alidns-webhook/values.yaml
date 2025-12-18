@@ -1,9 +1,13 @@
-replicaCount: 1
+groupName: acme.mycompany.com
+extraEnvs:
+  GROUP_NAME: acme.mycompany.com
+  ALIDNS_REGION: cn-hangzhou
 
+replicaCount: 1
 image:
-  repository: nginx
+  repository: pingshangyao/cert-manager-alidns-webhook
   pullPolicy: IfNotPresent
-  tag: ""
+  tag: "v0.0.1"
 
 imagePullSecrets: []
 nameOverride: ""

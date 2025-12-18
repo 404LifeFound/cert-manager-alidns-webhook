@@ -45,6 +45,11 @@ spec:
             - --tls-cert-file=/tls/tls.crt
             - --tls-private-key-file=/tls/tls.key
             - --secure-port={{ .Values.service.port }}
+          env:
+            {{- range $k, $v := .Values.extraEnvs }}
+            - name: {{ $k | quote }}
+              value: {{ tpl $v $ | quote }}
+            {{- end }}
           ports:
             - name: https
               containerPort: {{ .Values.service.port }}
