@@ -11,12 +11,13 @@ image:
 
 imagePullSecrets: []
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: cert-manager-alidns-webhook-tomas
 
 serviceAccount:
   create: true
   automount: true
-  annotations: {}
+  annotations:
+    pod-identity.alibabacloud.com/role-name: cert-manager-alidns-webhook
   name: ""
 
 podAnnotations: {}
@@ -29,7 +30,7 @@ securityContext:
     - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  #runAsUser: 1000
+  runAsUser: 10000
 
 service:
   type: ClusterIP
